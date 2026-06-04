@@ -231,5 +231,66 @@ artifacts/
 *.onnx
 *.h5
 
-# Kaggle
+# =========================
+# DATASETS & DATA FILES
+# =========================
+
+data/*
+!data/.gitkeep
+
+*.parquet
+*.csv
+*.npy
+*.npz
+*.pkl
+*.pickle
+
+# TFRecords
+*.tfrecord
+*.tfrecords
+
+# Compressed datasets
+*.zip
+*.tar
+*.gz
+
+# =========================
+# TRAINING OUTPUTS
+# =========================
+
+logs/
+tensorboard/
+wandb/
+
+# =========================
+# NOTEBOOK OUTPUTS
+# =========================
+
+*.ipynb_checkpoints
+
+# =========================
+# OS FILES
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+# VS CODE
+# =========================
+
+.vscode/
+
+# =========================
+# LOCAL EXPERIMENT FILES
+# =========================
+
+tmp/
+temp/
+cache/
+
+# =========================
+# KAGGLE
+# =========================
+
 kaggle.json
