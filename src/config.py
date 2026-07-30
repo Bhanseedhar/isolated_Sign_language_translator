@@ -32,8 +32,8 @@ class CFG:
     awp_lambda = 0.2
     awp_start_epoch = 15
     dropout_start_epoch =15
-    resme =0
-    decay_type = cosine
+    resume =0
+    decay_type = 'cosine'
     comment = f'islr-fp16-192-8-seed{seed}'
 
 
