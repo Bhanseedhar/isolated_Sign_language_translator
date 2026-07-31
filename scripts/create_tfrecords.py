@@ -31,6 +31,19 @@ dataset_path, Dataset = create_kaggle_dataset(n_splits=CFG.n_splits)
 
 convert_to_tfrecords(df=df ,n_splits=CFG.n_splits,chunk_size=CFG.chunk_size,n_part=CFG.n_part,dataset_name=Dataset, part=CFG.part ,label_dict=label_dict)
 
-subprocess.run(['kaggle', 'datasets', 'create', '-p', dataset_path, '--public'], check=True)
+# Check if the dataset already exists
+result = subprocess.run(
+    ["kaggle", "datasets", "status", f"jbsbhanc/{Dataset}"],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL,
+)
 
-version_dataset(Dataset)
+if result.returncode == 0:
+    print("Dataset already exists. Uploading new version...")
+    version_dataset(Dataset)
+else:
+    print("Creating dataset for the first time...")
+    subprocess.run(
+        ["kaggle", "datasets", "create", "-p", dataset_path, "--public"],
+        check=True
+    )
