@@ -1,6 +1,6 @@
 
 import numpy as np
-
+import tensorflow as tf
 
 class CFG:
     n_splits = 5

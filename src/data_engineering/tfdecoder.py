@@ -1,4 +1,4 @@
-
+from src.config import POINT_LANDMARKS,MAX_LEN
 
 def decode_tfrec(record_bytes):
     features = tf.io.parse_single_example(record_bytes,{

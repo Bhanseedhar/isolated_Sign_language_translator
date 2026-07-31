@@ -56,7 +56,7 @@ def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
     return model, cv, history
 
 
-def train_folds(CFG,folds,strategy =STRATEGY, summary=True):
+def train_folds(CFG,folds,strategy, summary=True):
     for fold in folds:
         if fold != 'all':
             all_files = TRAIN_FILENAMES

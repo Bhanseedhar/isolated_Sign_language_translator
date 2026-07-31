@@ -1,5 +1,5 @@
 import gc
-from .config import seed_everything
+from src.config import seed_everything
 from tensorflow.keras import mixed_precision
 
 
