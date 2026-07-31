@@ -1,6 +1,6 @@
 from sklearn.model_selection import KFold
 from joblib import Parallel, delayed
-from chunking import split_dataframe,process_chunk
+from .chunking import split_dataframe,process_chunk
 from multiprocessing import cpu_count
 from datetime import datetime
 
