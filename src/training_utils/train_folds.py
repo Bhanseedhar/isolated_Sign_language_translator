@@ -1,13 +1,13 @@
 
 
-from build_data_split import train_val_split
-from build_model import build_model
-from callbacks import build_callbacks
-from evaluate_model import evaluate_model
-from model_fit import fit_model
-from resume_training import resume_training
-from training_env_setup import setup_training_env
-from training_summary import show_training_summary
+from .build_data_split import train_val_split
+from .build_model import build_model
+from .callbacks import build_callbacks
+from .evaluate_model import evaluate_model
+from .model_fit import fit_model
+from .resume_training import resume_training
+from .training_env_setup import setup_training_env
+from .training_summary import show_training_summary
 
 
 def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
