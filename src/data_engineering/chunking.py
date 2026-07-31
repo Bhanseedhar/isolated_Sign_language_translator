@@ -5,9 +5,9 @@ from src.data_engineering.encoder import encode_row
 
 def split_dataframe(df,chunk_size=1000):
     chunks = list()
-    num_chunks=len(df)//chunks_size +1
+    num_chunks=len(df)//chunk_size +1
     for i in range(num_chunks):
-        chunks.append(df[1*chunk_size:(i+1)*chunk_size])
+        chunks.append(df[i*chunk_size:(i+1)*chunk_size])
     return chunks
 
 
