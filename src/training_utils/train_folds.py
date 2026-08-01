@@ -55,15 +55,3 @@ def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
 
     return model, cv, history
 
-
-def train_folds(CFG,folds,strategy, summary=True):
-    for fold in folds:
-        if fold != 'all':
-            all_files = TRAIN_FILENAMES
-            train_files = [x for x in all_files if f'fold{fold}' not in x]
-            valid_files = [x for x in all_files if f'fold{fold}' in x ]
-        else:
-            train_files = TRAIN_FILENAMES
-            valid_files = None
-        model , cv, history = train_fold(CFG,fold,train_files,valid_files,strategy,summary,)
-    return
