@@ -1,5 +1,5 @@
 from src.architecture_blocks.model_building import get_model
-from src.training_utils.lr_scheduler import OneCycleLR
+from src.training_utils.schedules import OneCycleLR
 from src.training_utils.adversarial_training import FGM, AWP
 import tensorflow_addons as tfa
 
