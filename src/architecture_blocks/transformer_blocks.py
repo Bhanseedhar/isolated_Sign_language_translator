@@ -1,3 +1,6 @@
+import tensorflow as tf
+
+
 def TransformerBlock(dim=256, num_heads=4, expand=4, attn_dropout=0.2, drop_rate=0.2, activation='swish'):
     def apply(inputs):
         x = inputs

@@ -1,3 +1,7 @@
+import tenserflow as tf
+
+
+
 def Conv1DBlock(channel_size,
           kernel_size,
           dilation_rate=1,
