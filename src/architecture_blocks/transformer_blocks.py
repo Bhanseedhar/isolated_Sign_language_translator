@@ -42,7 +42,8 @@ class MultiHeadSelfAttention(tf.keras.layers.Layer):
         attn = tf.keras.layers.Softmax(axis=-1)(attn, mask=mask)
         attn = self.drop1(attn)
 
-        x = attn @ v
+        attn = tf.cast(attn, v.dtype)
+        x = tf.matmul(attn, v)
         x = tf.keras.layers.Reshape((-1, self.dim))(tf.keras.layers.Permute((2, 1, 3))(x))
         x = self.proj(x)
         return x
