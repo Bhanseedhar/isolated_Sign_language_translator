@@ -37,6 +37,8 @@ def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
                                 strategy
                                 )
 
+
+    
     history = fit_model(CFG,
                         model,
                         train_ds,

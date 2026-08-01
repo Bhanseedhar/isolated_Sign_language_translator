@@ -21,6 +21,16 @@ def train_folds(CFG,folds,strategy, summary=True):
         else:
             train_files = TRAIN_FILENAMES
             valid_files = None
+
+            
+        print(f"Fold: {fold}")
+        print(f"Train files: {len(train_files)}")
+        print(f"Valid files: {len(valid_files)}")
+        print(train_files)
+        print(valid_files)
+
+
+
         model , cv, history = train_fold(CFG,fold,train_files,valid_files,strategy,summary,)
     return
 
