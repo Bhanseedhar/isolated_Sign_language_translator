@@ -92,20 +92,18 @@ class AWP(tf.keras.Model):
 
     def train_step(self, data):
         if self.late_dropout is not None:
-             tf.cond(
-                 self.optimizer.iterations >= self.dropout_step,
-                lambda: self.late_dropout.enabled.assign(True),
-                lambda: tf.no_op(),
-                    )
-        out = tf.cond(
-                self.train_counter < self.start_step,
-                lambda: super(AWP, self).train_step(data),
-                lambda: self.train_step_awp(data),
-                  )
+            self.late_dropout.enabled.assign(
+                tf.logical_or(self.late_dropout.enabled,
+                              self.optimizer.iterations >= self.dropout_step)
+            )
+
+        if self.train_counter < self.start_step:
+            out = super(AWP, self).train_step(data)
+        else:
+            out = self.train_step_awp(data)
 
         self.train_counter.assign_add(1)
         return out
-
 
 
         
