@@ -91,19 +91,51 @@ class AWP(tf.keras.Model):
         return {m.name: m.result() for m in self.metrics}
 
     def train_step(self, data):
+        x, y = data
+
         if self.late_dropout is not None:
             self.late_dropout.enabled.assign(
                 tf.logical_or(self.late_dropout.enabled,
                               self.optimizer.iterations >= self.dropout_step)
             )
 
-        if self.train_counter < self.start_step:
-            out = super(AWP, self).train_step(data)
-        else:
-            out = self.train_step_awp(data)
+        use_awp = self.train_counter >= self.start_step
 
+        with tf.GradientTape() as tape:
+            y_pred = self(x, training=True)
+            loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
+        params = self.trainable_variables
+        base_grads = tape.gradient(loss, params)
+
+        def awp_grads():
+            deltas = []
+            for g, p in zip(base_grads, params):
+                g = tf.zeros_like(p) + g
+                d = tf.math.divide_no_nan(self.delta * g, tf.math.sqrt(tf.reduce_sum(g**2)) + self.eps)
+                deltas.append(d)
+            for p, d in zip(params, deltas):
+                p.assign_add(d)
+            with tf.GradientTape() as tape2:
+                y_pred2 = self(x, training=True)
+                new_loss = self.compiled_loss(y, y_pred2, regularization_losses=self.losses)
+                if hasattr(self.optimizer, 'get_scaled_loss'):
+                    new_loss = self.optimizer.get_scaled_loss(new_loss)
+            g2 = tape2.gradient(new_loss, params)
+            if hasattr(self.optimizer, 'get_unscaled_gradients'):
+                g2 = self.optimizer.get_unscaled_gradients(g2)
+            for p, d in zip(params, deltas):
+                p.assign_sub(d)
+            return g2, y_pred2
+
+        def base_out():
+            return base_grads, y_pred
+
+        gradients, y_pred_final = tf.cond(use_awp, awp_grads, base_out)
+
+        self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
+        self.compiled_metrics.update_state(y, y_pred_final)
         self.train_counter.assign_add(1)
-        return out
+        return {m.name: m.result() for m in self.metrics}
 
 
         
