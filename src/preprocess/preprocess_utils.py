@@ -102,7 +102,7 @@ class Preprocess(tf.keras.layers.Layer):
         self.point_landmarks = point_landmarks
 
     def call(self, inputs):
-        if tf.rank(inputs) == 3:
+        if inputs.shape.rank == 3:
             x = inputs[None,...]
         else:
             x = inputs
