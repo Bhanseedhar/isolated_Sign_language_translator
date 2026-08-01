@@ -3,7 +3,7 @@ from src.training_utils.schedules import OneCycleLR
 from src.training_utils.learners import FGM, AWP
 import tensorflow as tf
 
-`def build_model(CFG,strategy,steps_per_epoch):
+def build_model(CFG,strategy,steps_per_epoch):
     with strategy.scope():
         dropout_step = CFG.dropout_start_epoch * steps_per_epoch
 
@@ -83,4 +83,4 @@ import tensorflow as tf
             steps_per_execution=1,   # was: steps_per_epoch
         )
 
-    return model, schedule, decay_schedule`
+    return model, schedule, decay_schedule
