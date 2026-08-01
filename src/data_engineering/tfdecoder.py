@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow import Tensor
-from src.data_engineering.preprocess import Preprocess
-from src.data_engineering.utils import len_interpolation
+from src.preprocess.preprocess_utils import Preprocess,len_interpolation
+
 from src.config import (
     POINT_LANDMARKS,
     MAX_LEN,
