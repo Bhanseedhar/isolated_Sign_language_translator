@@ -10,7 +10,9 @@ import glob
 
 strategy, REPLICAS, IS_TPU = get_strategy()
 
-TRAIN_FILENAMES = glob.glob('/kaggle/input/islr-5fold/*.tfrecords') ##makesure the dataset u create will be named here exatly
+TRAIN_FILENAMES = glob.glob(
+    "/kaggle/input/datasets/jbsbhanc/islr-5fold-jbsb/*.tfrecords"
+) ##makesure the dataset u create will be named here exatly
 
 def train_folds(CFG,folds,strategy, summary=True):
     for fold in folds:
@@ -22,7 +24,7 @@ def train_folds(CFG,folds,strategy, summary=True):
             train_files = TRAIN_FILENAMES
             valid_files = None
 
-            
+
         print(f"Fold: {fold}")
         print(f"Train files: {len(train_files)}")
         print(f"Valid files: {len(valid_files)}")
