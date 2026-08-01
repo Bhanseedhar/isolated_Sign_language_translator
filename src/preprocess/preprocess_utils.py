@@ -1,3 +1,5 @@
+import numpy as np
+import tensorflow as tf
 
 
 ROWS_PER_FRAME = 543
