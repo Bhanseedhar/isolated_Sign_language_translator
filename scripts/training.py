@@ -8,8 +8,6 @@ import glob
 
 
 
-
-
 strategy, REPLICAS, IS_TPU = get_strategy()
 
 TRAIN_FILENAMES = glob.glob('/kaggle/input/islr-5fold/*.tfrecords') ##makesure the dataset u create will be named here exatly
