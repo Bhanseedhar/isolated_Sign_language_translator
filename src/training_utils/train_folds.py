@@ -8,7 +8,7 @@ from .model_fit import fit_model
 from .resume_training import resume_training
 from .training_env_setup import setup_training_env
 from .training_summary import show_training_summary
-from src.config import CFG, TRAIN_FILENAMES
+from src.config import CFG
 
 def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
 
