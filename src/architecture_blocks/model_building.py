@@ -1,6 +1,7 @@
 from.conv_blocks import Conv1DBlock,CausalDWConv1D,LateDropout,ECA
 from.transformer_blocks import MultiHeadSelfAttention,TransformerBlock
-
+import tensorflow as tf
+from src.config import CFG,NUM_CLASSES,CHANNELS,PAD 
 
 def get_model(max_len=64, dropout_step=0, dim=192):
     inp = tf.keras.Input((max_len,CHANNELS))

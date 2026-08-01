@@ -89,7 +89,7 @@ class ECA(tf.keras.layers.Layer):
 
 
     def call(self,inputs,mask=None):
-        nn=tf.keras.layers.GlobalAveragePolling1D()(inputs,mask=mask)
+        nn=tf.keras.layers.GlobalAveragePooling1D()(inputs,mask=mask)
         nn=tf.expand_dims(nn,-1)
         nn=self.conv(nn)
         nn=tf.squeeze(nn,-1)

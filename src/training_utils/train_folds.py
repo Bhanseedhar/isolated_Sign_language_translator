@@ -15,7 +15,7 @@ def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
     setup_training_env(CFG)
 
     train_ds, valid_ds, num_train, num_valid, steps_per_epoch,valid_files = train_val_split(CFG,fold,train_files,valid_files)
-    model,schedule = build_model(CFG,strategy,steps_per_epoch)
+    model,schedule,decay_schedule = build_model(CFG,strategy,steps_per_epoch)
 
     if summary:
         show_training_summary(model,train_ds,valid_ds,schedule)

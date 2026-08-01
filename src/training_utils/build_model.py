@@ -1,7 +1,7 @@
 from src.architecture_blocks.model_building import get_model
 from src.training_utils.schedules import OneCycleLR
 from src.training_utils.learners import FGM, AWP
-
+import tensorflow as tf
 
 def build_model(CFG,strategy,steps_per_epoch):
     with strategy.scope():
