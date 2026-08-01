@@ -46,7 +46,8 @@ class AWP(tf.keras.Model):
         super().__init__(*args, **kwargs)
         self.delta = delta
         self.eps = eps
-        self.start_step = start_step
+        self.start_step = tf.constant(start_step, dtype = tf.int64)
+        self.train_counter = tf.Variable(0, dtype=tf.int64, trainable=False)
         
     def train_step_awp(self, data):
         # Unpack the data. Its structure depends on your model and
@@ -81,4 +82,10 @@ class AWP(tf.keras.Model):
         return {m.name: m.result() for m in self.metrics}
 
     def train_step(self, data):
-        return tf.cond(self._train_counter < self.start_step, lambda:super(AWP, self).train_step(data), lambda:self.train_step_awp(data))
+        out = tf.cond(
+            self.train_counter < self.start_step,
+            lambda:super(AWP, self).train_step(data),
+            lambda:self.train_step_awp(data)
+            )
+        self.train_counter.assign_add(1)
+        return out
