@@ -6,3 +6,4 @@ pyarrow
 tqdm
 tensorflow
 scikit-learn
+tensorflow_addons

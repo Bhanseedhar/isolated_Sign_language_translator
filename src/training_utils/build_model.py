@@ -1,7 +1,7 @@
 from src.architecture_blocks.model_building import get_model
 from src.training_utils.schedules import OneCycleLR
 from src.training_utils.learners import FGM, AWP
-import tensorflow_addons as tfa
+
 
 def build_model(CFG,strategy,steps_per_epoch):
     with strategy.scope():
@@ -62,13 +62,10 @@ def build_model(CFG,strategy,steps_per_epoch):
                 start_step=awp_step
             )
 
-        opt = tfa.optimizers.RectifiedAdam(
-            learning_rate=schedule,
-            weight_decay=decay_schedule,
-            sma_threshold=4,
-        )
-
-        opt = tfa.optimizers.Lookahead(opt, sync_period=5)
+        opt = tf.keras.optimizers.AdamW(
+                learning_rate=schedule,
+                weight_decay=decay_schedule,
+                )
 
         model.compile(
             optimizer=opt,
