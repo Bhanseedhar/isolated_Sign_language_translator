@@ -1,4 +1,28 @@
-from src.config import POINT_LANDMARKS,MAX_LEN
+import tensorflow as tf
+import numpy as np
+from tensorflow import Tensor
+from src.data_engineering.preprocess import Preprocess
+from src.data_engineering.utils import len_interpolation
+from src.config import (
+    POINT_LANDMARKS,
+    MAX_LEN,
+    ROWS_PER_FRAME,
+    LHAND,
+    RHAND,
+    LLIP,
+    RLIP,
+    LPOSE,
+    RPOSE,
+    LEYE,
+    REYE,
+    LNOSE,
+    RNOSE,
+    PAD,
+    CHANNELS,
+    NUM_CLASSES,
+)
+
+
 
 def decode_tfrec(record_bytes):
     features = tf.io.parse_single_example(record_bytes,{
@@ -153,10 +177,12 @@ def augment_fn(x, always=False, max_len=None):
 
 
 def preprocess(x,augment = False, max_len= MAX_LEN):
-    x = {
-        "coordinates" : Tensor(...),
-        "sign": integer
-    }
+
+
+    # x = {
+    #     "coordinates" : Tensor(...),
+    #     "sign": integer
+    # }
     coord = x['coordinates']
     coord = filter_nans_tf(coord)
     if augment :
