@@ -1,4 +1,4 @@
-
+from src.architecture_blocks import get_model
 
 def build_model(CFG,strategy,steps_per_epoch):
     with strategy.scope():
