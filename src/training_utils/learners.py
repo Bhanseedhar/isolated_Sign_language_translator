@@ -42,13 +42,17 @@ class FGM(tf.keras.Model):
         
 
 class AWP(tf.keras.Model):
-    def __init__(self, *args, delta=0.1, eps=1e-4, start_step=0, **kwargs):
+    def __init__(self, *args, delta=0.1, eps=1e-4, start_step=0,late_dropout =None,dropout_step = 0, **kwargs):
         super().__init__(*args, **kwargs)
         self.delta = delta
         self.eps = eps
         self.start_step = tf.constant(start_step, dtype = tf.int64)
         self.train_counter = tf.Variable(0, dtype=tf.int64, trainable=False)
-        
+        self.late_dropout = late_dropout
+        self.dropout_step = tf.constant(dropout_step, dtype=tf.int64)
+
+
+
     def train_step_awp(self, data):
         # Unpack the data. Its structure depends on your model and
         # on what you pass to `fit()`.
@@ -82,6 +86,16 @@ class AWP(tf.keras.Model):
         return {m.name: m.result() for m in self.metrics}
 
     def train_step(self, data):
+        if self.late_dropout is not None:
+            tf.cond(
+                self.optimizer.iterations >= self.dropout_step,
+                lambda: self.late_dropout.enabled.assign(True),
+                lambda: self.late_dropout.enabled,
+                    )
+
+
+
+
         out = tf.cond(
             self.train_counter < self.start_step,
             lambda:super(AWP, self).train_step(data),

@@ -33,6 +33,13 @@ def get_model(max_len=64, dropout_step=0, dim=192):
 
     x = tf.keras.layers.Dense(dim*2,activation=None,name='top_conv')(x)
     x = tf.keras.layers.GlobalAveragePooling1D()(x)
-    x = LateDropout(0.8, start_step=dropout_step)(x)
+
+    late_dropout = LateDropout(0.8)
+    x = late_dropout(x)
     x = tf.keras.layers.Dense(NUM_CLASSES,name='classifier')(x)
-    return tf.keras.Model(inp, x)
+    
+    model = tf.keras.Model(inp, x)
+    model.late_dropout = late_dropout
+    
+    
+    return model

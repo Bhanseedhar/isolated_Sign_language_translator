@@ -99,20 +99,18 @@ class ECA(tf.keras.layers.Layer):
 
 
 class LateDropout(tf.keras.layers.Layer):
-    def __init__(self, rate, noise_shape=None, start_step=0, **kwargs):
+    def __init__(self, rate, noise_shape=None, **kwargs):
         super().__init__(**kwargs)
         self.supports_masking = True
-        self.rate = rate
-        self.start_step = start_step
         self.dropout = tf.keras.layers.Dropout(rate, noise_shape=noise_shape)
-      
+
     def build(self, input_shape):
         super().build(input_shape)
-        agg = tf.VariableAggregation.ONLY_FIRST_REPLICA
-        self._train_counter = tf.Variable(0, dtype="int64", aggregation=agg, trainable=False)
+        self.enabled = tf.Variable(False, trainable=False, dtype=tf.bool)
 
     def call(self, inputs, training=False):
-        x = tf.cond(self._train_counter < self.start_step, lambda:inputs, lambda:self.dropout(inputs, training=training))
-        if training:
-            self._train_counter.assign_add(1)
-        return x
+        return tf.cond(
+            self.enabled,
+            lambda: self.dropout(inputs, training=training),
+            lambda: inputs,
+        )

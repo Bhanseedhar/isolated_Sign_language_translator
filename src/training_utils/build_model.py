@@ -44,7 +44,16 @@ def build_model(CFG,strategy,steps_per_epoch):
 
 
         awp_step = CFG.awp_start_epoch * steps_per_epoch
-
+        dropout_step = CFG.dropout_start_epoch * steps_per_epoch
+        
+        base_model = get_model(
+                 max_len=CFG.max_len,
+                 dropout_step=dropout_step,
+                 dim=CFG.dim
+                            )
+        
+        
+        
         if CFG.fgm:
             model = FGM(
                 model.input,
@@ -59,7 +68,9 @@ def build_model(CFG,strategy,steps_per_epoch):
                 model.output,
                 delta=CFG.awp_lambda,
                 eps=0.,
-                start_step=awp_step
+                start_step=awp_step,
+                late_dropout=base_model.late_dropout,
+                dropout_step=dropout_step,
             )
 
         opt = tf.keras.optimizers.AdamW(
