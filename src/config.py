@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import os 
 import random 
+import re
 class CFG:
     n_splits = 5
     n_part = 1
@@ -46,7 +47,9 @@ class CFG:
     compression = 'GZIP'
     data_root = '/kaggle/input/competitions/asl-signs'
 
-
+def count_data_items(filenames):
+    n = [int(re.compile(r"-([0-9]*)\.").search(filename.split('/')[-1]).group(1)) for filename in filenames]
+    return np.sum(n)
 
 
 def seed_everything(seed = 42):
