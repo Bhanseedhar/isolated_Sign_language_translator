@@ -12,8 +12,8 @@ class Snapshot(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         # logs is a dictionary
         if epoch in self.snapshot_epochs: # your custom condition         
-            self.model.save_weights(f"{self.save_name}-epoch{epoch}.h5")
-        self.model.save_weights(f"{self.save_name}-last.h5")
+            self.model.save_weights(f"{self.save_name}-epoch{epoch}.weights.h5")
+        self.model.save_weights(f"{self.save_name}-last.weights.h5")
         
 
 
@@ -61,8 +61,8 @@ class SWA(tf.keras.callbacks.Callback):
           self.model.set_weights(self.swa_weights)
           if self.train_ds is not None: #for the re-calculation of running mean and var
               self.train_step(self.train_ds.take(self.train_steps))
-          print(f'save SWA weights to {self.save_name}-SWA.h5')
-          self.model.save_weights(f"{self.save_name}-SWA.h5")
+          print(f'save SWA weights to {self.save_name}-SWA.weights.h5')
+          self.model.save_weights(f"{self.save_name}-SWA.weights.h5")
           if self.valid_ds is not None:
               self.model.evaluate(self.valid_ds, steps=self.valid_steps)
 
@@ -76,7 +76,7 @@ def build_callbacks(
     strategy
     ):
     logger = tf.keras.callbacks.CSVLogger(f'{CFG.output_dir}/{CFG.comment}-fold{fold}-logs.csv')
-    sv_loss = tf.keras.callbacks.ModelCheckpoint(f'{CFG.output_dir}/{CFG.comment}-fold{fold}-best.h5',monitor='val_loss',verbose =0,save_best_only=True,
+    sv_loss = tf.keras.callbacks.ModelCheckpoint(f'{CFG.output_dir}/{CFG.comment}-fold{fold}-best.weights.h5',monitor='val_loss',verbose =0,save_best_only=True,
             save_weights_only=True,mode = 'min',save_freq = 'epoch')
     snap = Snapshot(f'{CFG.output_dir}/{CFG.comment}-fold{fold}',CFG.snapshot_epochs)
     swa = SWA(f'{CFG.output_dir}/{CFG.comment}-fold{fold}',CFG.swa_epochs,strategy = strategy, train_ds = train_ds, valid_ds= valid_ds, valid_steps =-(num_valid//-CFG.batch_size))
