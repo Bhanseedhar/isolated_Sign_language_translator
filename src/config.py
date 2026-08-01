@@ -54,7 +54,7 @@ def seed_everything(seed = 42):
     np.random.seed(seed)
     tf.random.set_seed(seed)
     
-def get_strategy(device = 'TPU-VM'):
+def get_strategy(device = "GPU"):
     if "TPU" in device:
         tpu = 'local' if device == 'TPU-VM' else None
         print("connecting to TPU ..............")
