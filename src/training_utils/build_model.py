@@ -69,9 +69,9 @@ def build_model(CFG,strategy,steps_per_epoch):
                      )
 
         opt = tf.keras.optimizers.AdamW(
-                learning_rate=schedule,
-                weight_decay=decay_schedule,
-                )
+                         learning_rate=schedule,
+                         weight_decay=CFG.lr * CFG.weight_decay,   # plain float, just the starting value
+                            )
 
         model.compile(
             optimizer=opt,

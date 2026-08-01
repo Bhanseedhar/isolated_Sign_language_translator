@@ -113,3 +113,12 @@ class ListedLR(tf.keras.optimizers.schedules.LearningRateSchedule):
         learning_rates = [self(x) for x in eps]
         plt.scatter(eps,learning_rates,2)
         plt.show()
+
+    class WeightDecayScheduler(tf.keras.callbacks.Callback):
+        def __init__(self, decay_schedule):
+            super().__init__()
+            self.decay_schedule = decay_schedule
+
+        def on_train_batch_begin(self, batch, logs=None):
+            step = self.model.optimizer.iterations
+            self.model.optimizer.weight_decay = self.decay_schedule(step)
