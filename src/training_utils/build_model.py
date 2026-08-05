@@ -80,7 +80,7 @@ def build_model(CFG,strategy,steps_per_epoch):
                 label_smoothing=0.1,
             ),
             metrics=[tf.keras.metrics.CategoricalAccuracy()],
-            steps_per_execution=8,   # was: steps_per_epoch
+            steps_per_execution=4,   # was: steps_per_epoch
         )
 
     return model, schedule, decay_schedule
