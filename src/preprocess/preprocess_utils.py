@@ -119,17 +119,9 @@ class Preprocess(tf.keras.layers.Layer):
         length = tf.shape(x)[1]
         x = x[...,:2]
 
-        
-        dx = tf.pad(
-            x[:, 1:] - x[:, :-1],
-            [[0, 0], [0, 1], [0, 0], [0, 0]]
-                )
+        dx = tf.cond(tf.shape(x)[1]>1,lambda:tf.pad(x[:,1:] - x[:,:-1], [[0,0],[0,1],[0,0],[0,0]]),lambda:tf.zeros_like(x))
 
-        dx2 = tf.pad(
-            x[:, 2:] - x[:, :-2],
-            [[0, 0], [0, 2], [0, 0], [0, 0]]
-                )
-
+        dx2 = tf.cond(tf.shape(x)[1]>2,lambda:tf.pad(x[:,2:] - x[:,:-2], [[0,0],[0,2],[0,0],[0,0]]),lambda:tf.zeros_like(x))
 
         x = tf.concat([
             tf.reshape(x, (-1,length,2*len(self.point_landmarks))),
