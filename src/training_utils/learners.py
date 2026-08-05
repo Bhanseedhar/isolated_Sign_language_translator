@@ -99,7 +99,7 @@ class AWP(tf.keras.Model):
                               self.optimizer.iterations >= self.dropout_step)
             )
 
-        use_awp = self.train_counter >= self.start_step
+        mask = tf.cast(self.train_counter >= self.start_step, tf.float32)  # 0.0 or 1.0
 
         with tf.GradientTape() as tape:
             y_pred = self(x, training=True)
@@ -107,33 +107,34 @@ class AWP(tf.keras.Model):
         params = self.trainable_variables
         base_grads = tape.gradient(loss, params)
 
-        def awp_grads():
-            deltas = []
-            for g, p in zip(base_grads, params):
-                g = tf.zeros_like(p) + g
-                d = tf.math.divide_no_nan(self.delta * g, tf.math.sqrt(tf.reduce_sum(g**2)) + self.eps)
-                deltas.append(d)
-            for p, d in zip(params, deltas):
-                p.assign_add(d)
-            with tf.GradientTape() as tape2:
-                y_pred2 = self(x, training=True)
-                new_loss = self.compiled_loss(y, y_pred2, regularization_losses=self.losses)
-                if hasattr(self.optimizer, 'get_scaled_loss'):
-                    new_loss = self.optimizer.get_scaled_loss(new_loss)
-            g2 = tape2.gradient(new_loss, params)
-            if hasattr(self.optimizer, 'get_unscaled_gradients'):
-                g2 = self.optimizer.get_unscaled_gradients(g2)
-            for p, d in zip(params, deltas):
-                p.assign_sub(d)
-            return g2, y_pred2
+        deltas = []
+        for g, p in zip(base_grads, params):
+            g = tf.zeros_like(p) + g
+            d = tf.math.divide_no_nan(self.delta * g, tf.math.sqrt(tf.reduce_sum(g**2)) + self.eps)
+            deltas.append(d * mask)
 
-        def base_out():
-            return base_grads, y_pred
+        for p, d in zip(params, deltas):
+            p.assign_add(d)
 
-        gradients, y_pred_final = tf.cond(use_awp, awp_grads, base_out)
+        with tf.GradientTape() as tape2:
+            y_pred2 = self(x, training=True)
+            new_loss = self.compiled_loss(y, y_pred2, regularization_losses=self.losses)
+            if hasattr(self.optimizer, 'get_scaled_loss'):
+                new_loss = self.optimizer.get_scaled_loss(new_loss)
+        awp_grads = tape2.gradient(new_loss, params)
+        if hasattr(self.optimizer, 'get_unscaled_gradients'):
+            awp_grads = self.optimizer.get_unscaled_gradients(awp_grads)
+
+        for p, d in zip(params, deltas):
+            p.assign_sub(d)
+
+        gradients = [
+            mask * ag + (1.0 - mask) * bg
+            for ag, bg in zip(awp_grads, base_grads)
+        ]
 
         self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
-        self.compiled_metrics.update_state(y, y_pred_final)
+        self.compiled_metrics.update_state(y, y_pred)
         self.train_counter.assign_add(1)
         return {m.name: m.result() for m in self.metrics}
 
