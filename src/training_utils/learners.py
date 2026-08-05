@@ -106,11 +106,20 @@ class AWP(tf.keras.Model):
             loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
         params = self.trainable_variables
         base_grads = tape.gradient(loss, params)
+        for i, g in enumerate(base_grads):
+            if g is None:
+                print(f"base_grads[{i}] is None")
 
         deltas = []
         for g, p in zip(base_grads, params):
-            g = tf.zeros_like(p) + g
-            d = tf.math.divide_no_nan(self.delta * g, tf.math.sqrt(tf.reduce_sum(g**2)) + self.eps)
+            if g is None:
+                g = tf.zeros_like(p)
+
+            d = tf.math.divide_no_nan(
+                self.delta * g,
+                tf.math.sqrt(tf.reduce_sum(tf.square(g))) + self.eps
+            )
+
             deltas.append(d * mask)
 
         for p, d in zip(params, deltas):
@@ -121,9 +130,23 @@ class AWP(tf.keras.Model):
             new_loss = self.compiled_loss(y, y_pred2, regularization_losses=self.losses)
             if hasattr(self.optimizer, 'get_scaled_loss'):
                 new_loss = self.optimizer.get_scaled_loss(new_loss)
+        
         awp_grads = tape2.gradient(new_loss, params)
+        for i, g in enumerate(awp_grads):
+            if g is None:
+                print(f"awp_grads[{i}] is None")
+
+
         if hasattr(self.optimizer, 'get_unscaled_gradients'):
             awp_grads = self.optimizer.get_unscaled_gradients(awp_grads)
+        
+        fixed_awp_grads = []
+        for g, p in zip(awp_grads, params):
+            if g is None:
+                g = tf.zeros_like(p)
+            fixed_awp_grads.append(g)
+
+        awp_grads = fixed_awp_grads
 
         for p, d in zip(params, deltas):
             p.assign_sub(d)
