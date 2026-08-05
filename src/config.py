@@ -60,7 +60,7 @@ def seed_everything(seed = 42):
     
 def get_strategy(device = "GPU"):
     if "TPU" in device:
-        tpu = 'local' if device == 'TPU-VM' else None
+        tpu = 'local' if device == 'TPU v5e-8' else None
         print("connecting to TPU ..............")
         tpu = tf.distribute.cluster_resolver.TPUClusterResolver.connect(tpu=tpu)
         strategy = tf.distribute.TPUStrategy(tpu)
