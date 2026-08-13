@@ -31,7 +31,7 @@ class CFG:
 
     fp16 = True
     fgm = False
-    awp = True
+    awp = False
     awp_lambda = 0.2
     awp_start_epoch = 15
     dropout_start_epoch =15
