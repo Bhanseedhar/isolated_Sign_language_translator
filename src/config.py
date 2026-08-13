@@ -58,7 +58,7 @@ def seed_everything(seed = 42):
     np.random.seed(seed)
     tf.random.set_seed(seed)
     
-def get_strategy(device="TPU v5e-8"):
+def get_strategy(device = "GPU"):
     if "TPU" in device:
         tpu = 'local' if device == 'TPU v5e-8' else None
         print("connecting to TPU ..............")
@@ -66,27 +66,27 @@ def get_strategy(device="TPU v5e-8"):
         strategy = tf.distribute.TPUStrategy(tpu)
         IS_TPU = True
 
-    elif device == "GPU" or device == "CPU":
+    if device == "GPU" or device == "CPU":
         IS_TPU = False
         ngpu = len(tf.config.experimental.list_physical_devices('GPU'))
-        if ngpu > 1:
+        if ngpu>1:
             print("Using multi GPU")
             strategy = tf.distribute.MirroredStrategy()
-        elif ngpu == 1:
+        elif ngpu==1:
             print("Using single GPU")
             strategy = tf.distribute.get_strategy()
         else:
             print("Using CPU")
             strategy = tf.distribute.get_strategy()
             CFG.device = "CPU"
+    if device == "GPU":
+        
+        print("Num GPUs Available: ", ngpu)
 
-        if device == "GPU":
-            print("Num GPUs Available: ", ngpu)
-
-    AUTO = tf.data.experimental.AUTOTUNE
+    AUTO     = tf.data.experimental.AUTOTUNE
     REPLICAS = strategy.num_replicas_in_sync
     print(f'REPLICAS: {REPLICAS}')
-
+    
     return strategy, REPLICAS, IS_TPU
 
 ROWS_PER_FRAME = 543
