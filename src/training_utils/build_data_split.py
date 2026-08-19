@@ -12,6 +12,6 @@ def train_val_split(CFG,fold,train_files,valid_files=None):
         valid_files = []
     num_train = count_data_items(train_files)
     num_valid = count_data_items(valid_files)
-    steps_per_epoch = num_train//CFG.batch_size
+    steps_per_epoch = (num_train//CFG.batch_size)-1
 
     return train_ds,valid_ds,num_train,num_valid,steps_per_epoch,valid_files

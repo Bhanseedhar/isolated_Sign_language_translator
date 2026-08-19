@@ -22,7 +22,7 @@ class CFG:
     lr = 5e-4 * replicas
     weight_decay = 0.1
     lr_min = 1e-6
-    epoch = 300
+    epoch = 200
     warmup = 0 
     batch_size = 64* replicas
     snapshot_epochs =[]
