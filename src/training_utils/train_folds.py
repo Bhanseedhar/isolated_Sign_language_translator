@@ -39,7 +39,7 @@ def train_fold(CFG,fold,train_files,valid_files,strategy,summary=True,):
                                 strategy
                                 )
 
-    #callbacks.append(WeightDecayScheduler(decay_schedule))
+    callbacks.append(WeightDecayScheduler(decay_schedule))
     
     history = fit_model(CFG,
                         model,
