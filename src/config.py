@@ -18,7 +18,7 @@ class CFG:
     
     
     
-    replicas = 8
+    replicas = 2
     lr = 5e-4 * replicas
     weight_decay = 0.1
     lr_min = 1e-6
